@@ -1,0 +1,75 @@
+/*
+ * Hero: content-height only — vertical padding plus content. No viewport-
+ * relative height anywhere, and no min-height (see the height budget in
+ * DESIGN.md: the Projects heading and the first row stay visible at 390x844).
+ */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-block: var(--space-8) var(--space-10);
+}
+
+.name {
+  font-size: var(--text-name);
+  line-height: var(--leading-name);
+}
+
+.headline {
+  font-size: var(--text-headline);
+  line-height: var(--leading-headline);
+}
+
+.learning {
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+
+/* 8px extra above the actions: the buttons are a group, not another line. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.secondary {
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+/* Hover changes snap and never transition: a 150ms color transition on a
+   control would also run on theme change, and the theme switch must be
+   instant everywhere. Pressed feedback on touch comes from the native tap
+   highlight, which is deliberately not removed. */
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover {
+    background: var(--background);
+    color: var(--accent);
+  }
+
+  .secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}

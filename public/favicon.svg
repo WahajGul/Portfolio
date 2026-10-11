@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Flat monogram: accent tile, initial-shaped cutout. The two hex values
+       are the DESIGN.md accent and light background; a standalone SVG asset
+       cannot read CSS variables. No gradients, no emoji. -->
+  <rect width="32" height="32" fill="#1F4FD8" />
+  <path
+    d="M5 8h3.4l2.6 9.4L13.6 8h3.2l2.6 9.4L22 8h3.4l-4.3 16h-3.5l-2.4-8.6L12.9 24H9.4L5 8Z"
+    fill="#F7F8F9"
+  />
+</svg>

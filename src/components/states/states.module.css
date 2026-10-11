@@ -1,0 +1,4 @@
+/* One quiet treatment shared by Loading and ErrorState. */
+.state {
+  color: var(--muted);
+}

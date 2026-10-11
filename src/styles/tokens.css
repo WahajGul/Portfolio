@@ -1,0 +1,112 @@
+/*
+ * tokens.css — the single source of design values.
+ * No other file in the codebase defines a color, a type size, a spacing step,
+ * or a motion duration. Components consume these variables only.
+ *
+ * Light is the designed-first theme and the default. Dark applies through
+ * prefers-color-scheme, or through data-theme on <html> when the user has
+ * toggled explicitly. The dark block is repeated in both selectors because
+ * CSS has no mixin; the values are identical on purpose.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Color — light theme (see DESIGN.md for the contrast verification) */
+  --background: #f7f8f9;
+  --surface: #ffffff;
+  --text: #14181f;
+  --muted: #5b6470;
+  --border: #d9dee4;
+  --accent: #1f4fd8;
+
+  /* Accent tints: flat alpha washes of the accent, never gradients.
+     10% = selected chip background, 5% = row hover. */
+  --accent-tint: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-tint-strong: color-mix(in srgb, var(--accent) 5%, transparent);
+
+  /* Text placed on an accent fill (buttons, skip link).
+     Contrast: 6.63 light, 7.42 dark. */
+  --on-accent: var(--surface);
+
+  /* Type */
+  --font-display: "Bricolage Grotesque", "Bricolage Grotesque Fallback",
+    system-ui, sans-serif;
+  --font-body: "Public Sans", "Public Sans Fallback", system-ui, sans-serif;
+  --text-name: clamp(2.5rem, 9vw, 4.25rem);
+  --text-headline: clamp(1.25rem, 4vw, 1.75rem);
+  --text-section: clamp(1.5rem, 5vw, 2rem);
+  --text-project: clamp(1.125rem, 3vw, 1.375rem);
+  --text-body: 1rem;
+  --text-meta: 0.875rem;
+  --leading-name: 1.05;
+  --leading-heading: 1.2;
+  --leading-headline: 1.35;
+  --leading-body: 1.6;
+  --measure: 62ch;
+
+  /* Spacing (base 4px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radius scale with roles: 0 structure, 4px controls, 8px media */
+  --radius-structure: 0;
+  --radius-control: 4px;
+  --radius-media: 8px;
+
+  /* Layout */
+  --nav-height: 56px;
+  --container-width: 64rem;
+
+  /* Motion (150-400ms; nothing outside this range, nothing loops) */
+  --duration-press: 150ms;
+  --duration-fast: 200ms;
+  --duration-reveal: 300ms;
+  --duration-signature: 400ms;
+  --stagger: 90ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme: OS preference, unless the user explicitly chose light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --background: #12151a;
+    --surface: #1b2027;
+    --text: #e8eaed;
+    --muted: #9aa3ae;
+    --border: #2c333d;
+    --accent: #7fa2ff;
+
+    --accent-tint: color-mix(in srgb, var(--accent) 10%, transparent);
+    --accent-tint-strong: color-mix(in srgb, var(--accent) 5%, transparent);
+
+    --on-accent: var(--background);
+  }
+}
+
+/* Dark theme: explicit user choice via the theme toggle. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #12151a;
+  --surface: #1b2027;
+  --text: #e8eaed;
+  --muted: #9aa3ae;
+  --border: #2c333d;
+  --accent: #7fa2ff;
+
+  --accent-tint: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-tint-strong: color-mix(in srgb, var(--accent) 5%, transparent);
+
+  --on-accent: var(--background);
+}

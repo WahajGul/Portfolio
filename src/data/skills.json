@@ -1,0 +1,18 @@
+[
+  {
+    "group": "Frontend",
+    "items": ["React", "TypeScript", "Vite", "TanStack", "Zustand"]
+  },
+  {
+    "group": "Backend (learning)",
+    "items": ["Node", "Express", "Postgres"]
+  },
+  {
+    "group": "Tools and DevOps",
+    "items": ["Git", "Docker", "Linux"]
+  },
+  {
+    "group": "Mobile",
+    "items": ["React Native"]
+  }
+]

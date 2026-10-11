@@ -1,0 +1,25 @@
+/* Page shell: section rhythm and footer. The hero brings its own top pad,
+   so main starts flush under the nav and only closes the page at the end. */
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding-block: 0 var(--space-16);
+}
+
+.heading {
+  font-size: var(--text-section);
+  margin-bottom: var(--space-6);
+}
+
+/* Placeholder copy for sections not yet wired to the data layer. */
+.placeholder {
+  color: var(--muted);
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+}

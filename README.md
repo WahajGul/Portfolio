@@ -1,36 +1,35 @@
-# Wahaj Gul — Portfolio
+# React + TypeScript + Vite
 
-Personal portfolio website built with React, Vite, and GSAP.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Tech Stack
+Currently, two official plugins are available:
 
-- **React 19** — UI framework
-- **Vite 6** — build tool and dev server
-- **GSAP** — scroll-triggered animations and loading screen
-- **react-icons** — icon library (Phosphor, Font Awesome, Simple Icons)
-- **CSS custom properties** — theming with no external CSS framework
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Commands
+## React Compiler
 
-| Command | Purpose |
-|---------|---------|
-| `npm run dev` | Start dev server at `localhost:5173` |
-| `npm run build` | Production build to `dist/` |
-| `npm run preview` | Preview production build |
+The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
 
-## Structure
+Note: This will impact Vite dev & build performances.
+You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
 
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
-src/
-├── context/PortfolioContext.jsx   Global state for skills & projects
-├── hooks/useScrollAnimations.js   GSAP ScrollTrigger reveal hook
-├── components/
-│   ├── layout/                    Navbar, Layout
-│   ├── sections/                  Loading, Hero, About, Skills, Projects, Experience, Contact
-│   └── shared/                    Button, SectionTitle
-```
 
-- **Dynamic content**: Edit default skills/projects in `src/context/PortfolioContext.jsx` or use the `addSkill`/`removeSkill`/`addProject`/`removeProject` helpers.
-- **Sections** are full-width with `max-width: 1200px` centered content.
-- **Animations** use GSAP; hover effects use CSS transitions.
-- **Single page** — anchor-based navigation (`#about`, `#projects`, etc.).
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
