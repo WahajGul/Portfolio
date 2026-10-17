@@ -29,6 +29,10 @@
      Contrast: 6.63 light, 7.42 dark. */
   --on-accent: var(--surface);
 
+  /* Detail-panel backdrop: a flat alpha fill, never a gradient, never a blur.
+     Dark uses a deeper fill because the page behind it is already dark. */
+  --scrim: rgb(20 24 31 / 0.55);
+
   /* Type */
   --font-display: "Bricolage Grotesque", "Bricolage Grotesque Fallback",
     system-ui, sans-serif;
@@ -91,6 +95,7 @@
     --accent-tint-strong: color-mix(in srgb, var(--accent) 5%, transparent);
 
     --on-accent: var(--background);
+    --scrim: rgb(4 6 9 / 0.7);
   }
 }
 
@@ -109,4 +114,5 @@
   --accent-tint-strong: color-mix(in srgb, var(--accent) 5%, transparent);
 
   --on-accent: var(--background);
+  --scrim: rgb(4 6 9 / 0.7);
 }

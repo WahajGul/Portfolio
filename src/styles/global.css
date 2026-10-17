@@ -214,6 +214,12 @@ a {
   border: 0;
 }
 
+/* Shared section heading rhythm; each section keeps its own h2 and id. */
+.section-heading {
+  font-size: var(--text-section);
+  margin-bottom: var(--space-6);
+}
+
 /* Every focusable control gets the same visible ring. */
 :focus-visible {
   outline: 2px solid var(--accent);

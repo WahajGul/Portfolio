@@ -8,7 +8,14 @@ export interface Project {
   highlights?: string[];
   live?: string;
   repo?: string;
+  /** `{w}` URL template, e.g. "/images/smdb-800-{w}.webp" -> 480/768/1200w. */
   image?: string;
+  /** Required whenever `image` is set; a missing one strips the image only. */
+  imageAlt?: string;
+  /** Optional phone-shaped shot, served below 768px; same widths, same alt. */
+  imageMobile?: string;
+  /** Optional click-to-play demo URL, rendered as a link, never embedded. */
+  demo?: string;
   status: ProjectStatus;
   featured?: boolean;
 }

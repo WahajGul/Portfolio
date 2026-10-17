@@ -8,11 +8,6 @@
   padding-block: 0 var(--space-16);
 }
 
-.heading {
-  font-size: var(--text-section);
-  margin-bottom: var(--space-6);
-}
-
 /* Placeholder copy for sections not yet wired to the data layer. */
 .placeholder {
   color: var(--muted);

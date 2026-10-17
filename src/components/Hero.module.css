@@ -2,7 +2,48 @@
  * Hero: content-height only — vertical padding plus content. No viewport-
  * relative height anywhere, and no min-height (see the height budget in
  * DESIGN.md: the Projects heading and the first row stay visible at 390x844).
+ *
+ * The signature moment lives here as keyframes rather than in Framer Motion,
+ * so the first screen animates without the motion chunk. Timing comes from
+ * tokens.css and is not repeated.
  */
+
+@keyframes wipe-rise {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: translateY(12px);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+/* One 400ms wipe of the line's own box, left to right, with a 12px rise.
+   fill-mode both: a delayed step holds its start state instead of flashing in
+   ahead of the wipe, and the first step (no delay) starts at the first paint.
+   Only clip-path and transform animate. */
+.wipe {
+  animation: wipe-rise var(--duration-signature) var(--ease-out) both;
+}
+
+/* Name 0ms, headline and looking-for 90ms, learning line 180ms. */
+.wipeStep1 {
+  animation-delay: var(--stagger);
+}
+
+.wipeStep2 {
+  animation-delay: calc(var(--stagger) * 2);
+}
+
+/* global.css already flattens every animation duration here; switching the
+   wipe off outright keeps the hero from depending on that. */
+@media (prefers-reduced-motion: reduce) {
+  .wipe {
+    animation: none;
+  }
+}
 
 .hero {
   display: flex;

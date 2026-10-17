@@ -40,9 +40,37 @@ const isProject = (value: unknown): value is Project => {
     (value.live === undefined || isNonEmptyString(value.live)) &&
     (value.repo === undefined || isNonEmptyString(value.repo)) &&
     (value.image === undefined || isNonEmptyString(value.image)) &&
+    (value.imageAlt === undefined || isNonEmptyString(value.imageAlt)) &&
+    (value.imageMobile === undefined || isNonEmptyString(value.imageMobile)) &&
+    (value.demo === undefined || isNonEmptyString(value.demo)) &&
     isOptionalBoolean(value.featured);
   if (!valid) warnDropped("project", value);
   return valid;
+};
+
+/**
+ * A screenshot is data about the image, not about the project: an `image` with
+ * no authored `imageAlt` is stripped (with a warning naming the project) and the
+ * project stays, rendering text-only. This is the one place a guard rewrites an
+ * entry instead of dropping it, and it is deliberate.
+ */
+const withoutBadImage = (project: Project): Project => {
+  if (project.image === undefined) {
+    if (project.imageMobile !== undefined) {
+      console.warn(
+        `[data] project "${project.id}" has an imageMobile but no image; dropping the mobile source`
+      );
+      return { ...project, imageMobile: undefined };
+    }
+    return project;
+  }
+
+  if (project.imageAlt !== undefined) return project;
+
+  console.warn(
+    `[data] project "${project.id}" has an image but no imageAlt; dropping the image and keeping the project`
+  );
+  return { ...project, image: undefined, imageMobile: undefined };
 };
 
 const isSkillGroup = (value: unknown): value is SkillGroup => {
@@ -84,6 +112,7 @@ export const getProjects = async (): Promise<Project[]> => {
   }
   return entries
     .filter(isProject)
+    .map(withoutBadImage)
     .sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
 };
 

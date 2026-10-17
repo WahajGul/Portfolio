@@ -10,6 +10,9 @@
     ],
     "live": "https://smdb.wahajgul.dev/",
     "repo": "https://github.com/WahajGul/movie-app",
+    "image": "/images/smdb-movie-app-{w}.webp",
+    "imageAlt": "SMDB browse screen with a trending movies row and a trending shows row of poster cards",
+    "imageMobile": "/images/smdb-movie-app-mobile-{w}.webp",
     "status": "live",
     "featured": true
   },
@@ -18,9 +21,13 @@
     "title": "Recipe  Finder",
     "description": "A Simple Meal App with production level optimization using tanstack queries and router",
     "stack": ["React", "TypeScript", "Vite"],
+    "live": "https://meal-app.wahajgul.dev/",
     "repo": "https://github.com/example/example-side-project",
+    "image": "/images/meal-app-{w}.webp",
+    "imageAlt": "Recipe Finder screen with a search field, category, cuisine, and ingredient filters above a grid of recipe cards",
+    "imageMobile": "/images/meal-app-mobile-{w}.webp",
     "status": "live",
-    "live": "https://meal-app.wahajgul.dev/"
+    "featured": true
   },
   {
     "id": "mimoza-app",
@@ -28,6 +35,41 @@
     "description": "Fast and Premium E-Commerce Store of a personal brand with in-app checkout",
     "stack": ["React", "TypeScript", "Vite"],
     "live": "https://mimoza-store.wahajgul.dev/",
-    "status": "live"
+    "image": "/images/mimoza-app-{w}.webp",
+    "imageAlt": "Perfume storefront with a product grid of bottles, discount badges, and Add to Cart buttons",
+    "imageMobile": "/images/mimoza-app-mobile-{w}.webp",
+    "status": "live",
+    "featured": true
+  },
+  {
+    "id": "example-design-system",
+    "title": "Example Design System",
+    "description": "Replace this description. This plate deliberately has no screenshot, which is a supported state rather than a broken one.",
+    "stack": ["React", "TypeScript", "Vitest"],
+    "highlights": [
+      "Replace this line with one concrete outcome, in a sentence."
+    ],
+    "repo": "https://github.com/example/example-design-system",
+    "demo": "https://example.com/example-design-system-demo",
+    "status": "in-progress",
+    "featured": true
+  },
+  {
+    "id": "example-notes-api",
+    "title": "Example Notes API",
+    "description": "Replace this description. This project lives in the More projects list, so it has no screenshot and no detail panel.",
+    "stack": ["Node", "Express", "Docker"],
+    "repo": "https://github.com/example/example-notes-api",
+    "status": "planned",
+    "featured": false
+  },
+  {
+    "id": "example-habit-tracker",
+    "title": "Example Habit Tracker",
+    "description": "Replace this description. This phone app also lives in the More projects list.",
+    "stack": ["React Native", "Expo", "TypeScript"],
+    "repo": "https://github.com/example/example-habit-tracker",
+    "status": "in-progress",
+    "featured": false
   }
 ]

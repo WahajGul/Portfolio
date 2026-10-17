@@ -1,27 +1,19 @@
-import { m, useReducedMotion } from "framer-motion";
 import { getProfile } from "../api";
 import { useAsync } from "../hooks/useAsync";
-import { SIGNATURE_STAGGER, signatureTransition, wipeRise } from "../lib/motion";
 import { ErrorState } from "./states/ErrorState";
 import { Loading } from "./states/Loading";
 import styles from "./Hero.module.css";
 
+// The signature moment is CSS keyframes (Hero.module.css), not Framer Motion:
+// the first screen renders and animates with no motion JavaScript at all. The
+// order is name (0ms), headline and looking-for line (90ms), learning line
+// (180ms) — three 400ms wipes, 12px rise, complete at 580ms, once on load.
+// The text is in the DOM from the first paint, so assistive tech and search
+// never wait on the wipe, and the reduced-motion block turns it off outright.
+// The wipe rides the element's mount, which for the local data layer is the
+// very first paint (see useAsync).
 export const Hero = () => {
   const { data: profile, loading, error } = useAsync(getProfile);
-  const reducedMotion = useReducedMotion() ?? false;
-
-  // Signature moment, once on mount: name (0ms), headline (90ms), learning
-  // line (180ms) — three 400ms wipes, complete at 580ms. The looking-for line
-  // rides with the headline step. The text is in the DOM before any of this,
-  // so assistive tech and search never wait on the wipe. Under reduced motion
-  // initial=false renders every line already in its final state: no wipe, no
-  // rise, no delay.
-  const step = (index: number) => ({
-    initial: reducedMotion ? false : ("hidden" as const),
-    animate: "visible" as const,
-    variants: wipeRise,
-    transition: { ...signatureTransition, delay: SIGNATURE_STAGGER * index },
-  });
 
   return (
     <section id="hero" className={styles.hero} aria-label="Introduction">
@@ -29,17 +21,15 @@ export const Hero = () => {
       {error !== null && <ErrorState />}
       {!loading && error === null && profile !== null && (
         <>
-          <m.h1 className={styles.name} {...step(0)}>
-            {profile.name}
-          </m.h1>
-          <m.p className={styles.headline} {...step(1)}>
+          <h1 className={`${styles.name} ${styles.wipe}`}>{profile.name}</h1>
+          <p className={`${styles.headline} ${styles.wipe} ${styles.wipeStep1}`}>
             {profile.headline}
-          </m.p>
-          <m.p {...step(1)}>{profile.lookingFor}</m.p>
+          </p>
+          <p className={`${styles.wipe} ${styles.wipeStep1}`}>{profile.lookingFor}</p>
           {profile.currentlyLearning !== undefined && (
-            <m.p className={styles.learning} {...step(2)}>
+            <p className={`${styles.learning} ${styles.wipe} ${styles.wipeStep2}`}>
               Currently learning: {profile.currentlyLearning}
-            </m.p>
+            </p>
           )}
           <div className={styles.actions}>
             <a className={`${styles.button} ${styles.primary}`} href="#projects">
