@@ -26,9 +26,8 @@ advance.
 | border      | `#D9DEE4`  | `#2C333D`  | Hairlines, plate edges, and the hero dot grid (decorative)  |
 | accent      | `#1F4FD8`  | `#7FA2FF`  | Links, focus rings, primary button, selected chip, live status |
 
-Derived (alpha of accent only): `--accent-tint` = accent at 10% (selected chip background, the
-single tint plate); `--accent-tint-strong` = accent at 5% on surface (block hover on fine
-pointers). Verified below.
+Derived (alpha of accent only): `--accent-tint` = accent at 10% (selected chip background);
+`--accent-tint-strong` = accent at 5% on surface (block hover on fine pointers). Verified below.
 
 ### Contrast verification (WCAG 2.1: 4.5:1 text, 3:1 large text and UI boundaries)
 
@@ -76,6 +75,9 @@ boundary that identifies a control — chip outlines, button edges, input border
 the `Details` button's outline, the screenshot's hairline — uses `muted` (5.64–6.41, pass) or
 `accent`. Focus rings are always
 `accent` at 2px with 2px offset. No information is carried by a decorative border alone.
+The same rule extends to underlines: the underline that says "this row is a link" on a contact
+entry, and the one on the footer's repository link, carry information, so they are drawn in
+`muted` — never in the hairline color.
 
 ## Type
 
@@ -125,22 +127,61 @@ own; the Projects band's `surface` is what separates the grid from the hero, and
 inside it sit on `surface` too (their edges, not a shadow, define them). Every text pairing
 in a band is already verified above (`text`/`muted` on both band colors).
 
-### Background elements (exactly three)
+**Built:** every section is a full-bleed band that holds its own `.container`, and two utilities
+in `global.css` carry the system: `.band` (the band's own vertical room) and `.band-surface`
+(the fill). The hero, the Skills band, and the footer are `background`, which is also the page
+color, so they need no rule at all — only Projects and Contact paint. A band's `padding-block`
+*is* the section gap, which is what leaves the fold math untouched: the hero keeps its own
+padding and its band adds none, so the distance from the hero's last line to the Projects
+heading is the hero's own 40px plus the Projects band's top padding.
+
+**The gap is fluid, and it grew.** It was a flat 48px a side (96px between sections) until a
+review of the built page found the Skills band sitting too close under the More-projects button:
+a section that ends in a bordered control has no internal air below it the way a project plate
+does, so the same 96px reads much tighter there. `.band` now uses
+`clamp(var(--space-16), 6vw, var(--space-20))` — 128px between sections on phones and tablets,
+opening to 160px on a desktop, where the fixed 48px looked mean next to a 1024px column. 6vw only
+passes the 64px floor past roughly a 1070px viewport, so phones and tablets share one value.
+
+The 16px it adds at the top of the Projects band is the only part of this that touches the first
+screen, and the phone height budget below carries the new figure. The hero → Projects distance
+grows from 88px to 104px, which is the same complaint answered at the boundary above.
+
+### Background elements (exactly two)
 
 1. **Alternating flat bands** (above): `background` and `surface` full-bleed strata. No
    gradient, no rule, no texture — a flat color change is the whole device.
-2. **Dot grid — hero only.** One static inline SVG `<pattern>` of 1px dots on a 24px grid,
-   `aria-hidden`, filled from a CSS variable (`border` at very low opacity, so it follows both
-   themes without a second hex value). No animation, no gradient, no canvas, ~0.4KB of HTML. It
-   sits in the hero's empty area only — never behind the name, the headline, or any body text —
-   so text contrast is untouched. It never appears in another band.
-3. **One flat accent-tint plate** behind the hero action row: a rectangle at `--accent-tint`,
-   0 radius, inset 8px beyond the button group on each side. It marks the primary next step
-   and is the only decorative fill in the page. Static, `aria-hidden`.
+2. **Dot grid — hero only.** One static inline SVG `<pattern>` of 1px-radius dots on a 24px
+   grid, `aria-hidden`, filled from a CSS variable (`border` at very low opacity, so it follows
+   both themes without a second hex value). No animation, no gradient, no canvas, ~0.4KB of
+   HTML. It sits in the hero's empty area only — never behind the name, the headline, or any
+   body text — so text contrast is untouched. It never appears in another band.
 
-Those three are the entire background system; nothing else in the page is decoration. No CSS
-gradient function exists anywhere in the stylesheet: bands are flat colors, the dot grid is an
-SVG pattern, the plate is a flat alpha wash. Verified by grep in review.
+Those two are the entire background system; nothing else in the page is decoration. No CSS
+gradient function exists anywhere in the stylesheet: bands are flat colors and the dot grid is an
+SVG pattern. Verified by grep in review.
+
+**Built, and where:** the bands are the `.band` / `.band-surface` utilities; the dot grid is the
+`<svg>` at the top of `Hero.tsx` (24px tall, so it covers exactly the hero's top padding strip
+and can never reach the name below it).
+
+**The accent-tint plate was cut.** A third element — a flat `--accent-tint` rectangle inset 8px
+beyond the hero's action row — was specified here, built in the Step 8 pass, and removed the same
+day after seeing it in the browser. Two reasons, both fatal to its job:
+
+- **In dark theme it is the surface band.** `--accent-tint` is the accent at 10% alpha, so over
+  the dark background it composites to `#1D2331`, and `--surface` is `#1B2027` — within a few RGB
+  steps. An element whose whole purpose is to mark one group of controls instead read as a piece
+  of the Projects band that had slipped into the hero.
+- **It broke the left spine.** Insetting it 8px on every side put its left edge 8px *left* of the
+  column edge that the name, the headline, every plate, and the footer all align to. The page's
+  one strong alignment line is worth more than a highlight that the accent-filled primary button
+  already provides.
+
+Measured in retrospect against AGENTS.md's rule, this is the right outcome anyway: the rule is
+*at most one* flat accent-tint shape, and zero satisfies it. A tint plate may come back only with
+a value that cannot be confused with `surface` in either theme, aligned to the container edge
+rather than outdented — both conditions to be checked in both themes before it ships again.
 
 ### Hero wireframe (320px phone → desktop)
 
@@ -163,10 +204,8 @@ SVG pattern, the plate is a flat alpha wash. Verified by grep in review.
  | Currently learning:            |
  | Docker, Linux, Node            |
  |                                |
- | +----------------------------+ |
- | | [View projects] [Contact]  | |
- | | [Resume]                   | |
- | +----------------------------+ |
+ | [View projects] [Contact]      |
+ | [Resume]                       |
  +--------------------------------+
 
  desktop (>=1024)
@@ -184,23 +223,24 @@ SVG pattern, the plate is a flat alpha wash. Verified by grep in review.
  |                                             |
  | Currently learning: Docker, Linux, Node     |
  |                                             |
- | +-----------------------------------------+ |
- | | [View projects]  [Contact]  [Resume]    | |
- | +-----------------------------------------+ |
+ | [View projects]  [Contact]  [Resume]        |
  +---------------------------------------------+
 ```
 
-The double-bordered box is the flat accent-tint plate behind the action row.
+The action row sits **directly on the band**, left-aligned with everything above it. An earlier
+draft drew a flat accent-tint plate around it; that box was cut after review — see *Background
+elements* for the two reasons.
 
 The hero contains **no images and no Framer Motion** — text, the dot-grid SVG, and CSS
 keyframes only, so the h1 is the LCP element and nothing competes with it. Sticky nav is 56px
 tall on phones and holds one row with no logo, as drawn. The math at 320px: the container is
 `min(100% - 2rem, 64rem)`, so 288px of content width. Label estimates at 16px Public Sans 600:
 "Projects" ≈ 62px + 16px padding = 78px, "Skills" ≈ 44 + 16 = 60px, "Contact" ≈ 54 + 16 = 70px;
-8px gaps between the three targets = 16px; theme toggle 44px. Total = 268px, 20px slack. The
-logo monogram is not shown below 640px at all. If a future label change breaks the fit, the
-theme toggle moves from the nav into the hero's action row; the links themselves never collapse
-into a hamburger, because three links do not justify a menu.
+8px gaps between the three targets = 16px; theme toggle 44px. Total = 268px, 20px slack. The nav
+carries the links and the toggle and nothing else — a monogram would repeat the name that the h1
+states 40px below it, in a row that has no room to spare on a phone. If a future label change
+breaks the fit, the theme toggle moves from the nav into the hero's action row; the links
+themselves never collapse into a hamburger, because three links do not justify a menu.
 
 The hero is content-height: vertical padding plus its content, no viewport-relative height at
 all — no `min-height` in `dvh`/`vh`, ever.
@@ -347,6 +387,19 @@ column on phones and two from 640px up. Items stagger in lightly (see motion inv
 A list of links; email uses `mailto:` and a `Copy email` button with a lucide `Copy` icon
 (meaningful icon, per stack rules). No form. Contact links are part of the motion inventory's
 stagger on first view.
+
+Each row is a channel name and its value inside the one link, with the channel's mark to the left:
+`mail`, `phone`, and `globe` map to their lucide icons, and anything else — including `github` and
+`linkedin`, which lucide no longer ships as brand marks — falls back to a plain link icon, so a new
+entry in `contacts.json` always renders. An `http(s)` address opens in a new tab (with a visually
+hidden note); `mailto:` and `tel:` are handed to the browser untouched, so the real mail and phone
+handlers open. The copy button appears only on the `mailto:` row, and its confirmation is a visible
+`role="status"` line, so the outcome is both seen and announced, in words — including the failure
+path where the Clipboard API is unavailable. Every row is a 44px target, and the underline is the
+non-color cue that the row is a link (there on touch, where hover never happens).
+
+**Footer.** The year and a link to the repository, on the footer's own band. Nothing else: no
+newsletter, no columns of filler links.
 
 ## Signature moment
 
@@ -517,23 +570,24 @@ does not animate, so no row ever fades in under the reader's eyes one frame afte
 **Nothing on this site is blank while JavaScript loads, and no content is hidden behind a
 loader.**
 
-### Bundle size: budget and measured (Step 6b build)
+### Bundle size: budget and measured (Step 8 review build)
 
 | Chunk                                                            | Budget (gzip) | Minified   | Measured (gzip) |
 | ---------------------------------------------------------------- | ------------- | ---------- | --------------- |
-| Initial JS (React, app, and the Framer Motion core)               | ≈ 95 KB       | 297.70 KB  | 96.18 KB        |
+| Initial JS (React, app, and the Framer Motion core)               | ≈ 95 KB       | 306.98 KB  | 98.73 KB        |
 | Deferred motion chunk (`domMax` features), fetched at first idle  | ≈ 35 KB       | 85.95 KB   | 28.49 KB        |
-| CSS (tokens, type, bands, dot grid, keyframes, skeleton, panel)   | —             | 15.72 KB   | 3.72 KB         |
+| CSS (tokens, type, keyframes, bands, three skeletons, plates, panel, skills, contact, footer) | — | 19.37 KB | 4.22 KB |
 | HTML (incl. the inline dot-grid SVG)                              | —             | 2.62 KB    | 1.19 KB         |
 | Fonts (Bricolage 700 + Public Sans 400 on first load; 74 KB total for four files) | — | — | ≈ 40 KB |
 
-The deferred chunk is inside budget. The initial chunk is **1.18 KB (1.2%) over the ≈ 95 KB
-figure**: the grid, the More-projects list, the dialog wrapper, and the image helper together added
-3.39 KB gzip over Step 6a's 92.79 KB, and about 0.8 KB of that is React Compiler memoisation for
-the two new list components. It is left in place rather than trimmed, because the gate is
-Lighthouse Performance ≥ 90 with LCP < 2.5s and a kilobyte of gzip does not move either number —
-but the number is reported rather than rounded away. If it must come down, the only real levers are
-the ones below, not a config tweak.
+The deferred chunk is inside budget. The initial chunk is **3.73 KB (3.9%) over the ≈ 95 KB
+figure**: Step 6b's grid, More-projects list, dialog wrapper, and image helper added 3.39 KB gzip
+over Step 6a's 92.79 KB, Step 7's Skills and Contact sections, their two skeletons, and five
+channel/copy icons added a further 2.21 KB gzip, and this review pass — the band utilities, the
+hero's dot-grid SVG, and the shared heading-wipe variant — added 0.34 KB gzip. It
+is left in place rather than trimmed, because the gate is Lighthouse Performance ≥ 90 with
+LCP < 2.5s and these kilobytes do not move either number — but the number is reported rather than
+rounded away. If it must come down, the only real levers are the ones below, not a config tweak.
 
 Split measured against a React-only probe built with the same config (**React 19 + react-dom +
 lucide + the React Compiler runtime = 223.50 KB minified / 70.30 KB gzip**), the real decomposition
@@ -543,17 +597,17 @@ is:
 | ------------------------------------ | ------- |
 | React, react-dom, lucide, compiler runtime | 70.30 KB |
 | Framer Motion core (`m`, `AnimatePresence`, the hooks; needed on first render) | ≈ 21 KB |
-| App code, project data, the panel, the dialog wrapper, icons | ≈ 4.9 KB |
-| **Initial JS**                       | **96.18 KB** |
+| App code, section components, project data, icons | ≈ 7.4 KB |
+| **Initial JS**                       | **98.73 KB** |
 | Deferred `domMax` feature bundle (renderer, animations, gestures, drag, layout) | 28.49 KB |
 
 `m` plus `LazyMotion` is not "no Framer on first paint": the module entry, `motion-dom`, and
 `motion-utils` are what the minimal `m` component renders with, and they are ~20 KB gzip of the
 initial chunk, which is why the early 75 KB estimate was never reachable — the React-only floor
 alone is 70.3 KB gzip. Only the feature implementations (including projection and drag) are
-deferred, at 28.5 KB gzip. Against the single-chunk baseline (368.30 KB minified / 117.90 KB
-gzip), this arrangement still moves **25.1 KB gzip off the critical path**, and the hero finishes
-with no motion JavaScript at all.
+deferred, at 28.5 KB gzip. Against the same build with Framer in the initial chunk (391.66 KB
+minified / 126.88 KB gzip, i.e. the two chunks above added together), this arrangement moves
+**28.5 KB gzip off the critical path**, and the hero finishes with no motion JavaScript at all.
 
 The idle scheduling does not change these numbers: it changes *when* the deferred chunk is
 requested. Reveals stay visible by default until it resolves (see above), so the delay is
@@ -584,13 +638,13 @@ plus a scroll through Projects therefore transfers roughly:
 
 | Part                                          | 390×844, DPR 3 |
 | --------------------------------------------- | -------------- |
-| HTML + CSS (measured build)                   | ≈ 19 KB        |
+| HTML + CSS (measured build)                   | ≈ 22 KB        |
 | Fonts (first load)                            | ≈ 40 KB        |
-| Initial JS                                    | 96.0 KB (gz)   |
+| Initial JS                                    | 98.4 KB (gz)   |
 | Deferred motion chunk                         | 28.5 KB (gz)   |
 | Lead screenshot (near fold, lazy, 768w)       | ≈ 95 KB        |
 | Remaining featured screenshots (3, lazy, 768w)| ≈ 285 KB       |
-| **Total after scrolling the whole grid**      | **≈ 565 KB**   |
+| **Total after scrolling the whole grid**      | **≈ 569 KB**   |
 
 Images dominate, as they should on a portfolio. The estimates above are deliberately pessimistic:
 the seed screenshots are flat UI shots and compress much better than a photograph — measured, 480w
@@ -605,37 +659,40 @@ bar shown, and ≈ 468px on a 320×568 phone, both below the 56px nav.
 
 | Item                                       | 320px | 390px | 768px | 1440px |
 | ------------------------------------------ | ----- | ----- | ----- | ------ |
-| Hero (pads, gaps, four lines, buttons)      | 364\* | 332   | 345   | 345    |
-| Section gap below hero                      | 48    | 48    | 48    | 48     |
-| Projects band pad + heading + margin        | 56    | 56    | 56    | 56     |
+| Hero (pads, gaps, four lines, buttons)       | 364\* | 332 | 345 | 345 |
+| Projects band top pad (the section gap, fluid) | 64  | 64    | 64    | 80     |
+| Projects heading + its margin below it       | 56    | 56    | 56    | 56     |
 | Chips row (only at 5+ projects)             | 76    | 76    | 76    | 76     |
 | Lead plate top pad (offset before its title) | 24    | 24    | 24    | 24     |
 
-\* At ≤360px the hero line gaps tighten to 12px and its bottom pad to 32px, which is what keeps
-the 320px column at 364px instead of 384px.
+\* The 320px figure is the hero's own padding (32 + 40), four 16px gaps, the h1 at 40px, a
+two-line headline, a two-line looking-for line, the meta learning line, and a single row of
+buttons; the 320px figure is the worst case of those two-line wraps. (The cut tint plate would
+have added 8px to each of these numbers; cutting it took them back down.)
 
 What the fold promise is now:
 
-- **390×844 (the primary target):** nav (56) + hero (332) + gap (48) + band pad and heading (56)
-  = 492px, leaving ≈ 148px. The lead plate starts at 492 and its padding plus title, status, and
-  stack (≈ 97px) are fully visible. **With chips present** (5+ projects only) the chips add 76px
-  and the plate's title sits right at the fold — accepted, because chips only appear once the
-  list is long enough to need them, and the lead plate is still the first thing after them.
-- **320×568:** nav (56) + hero (364) + gap (48) + band pad and heading (56) = 524px against
+- **390×844 (the primary target):** nav (56) + hero (332) + band top pad (64) + heading and
+  margin (56) = 508px, leaving ≈ 132px. The lead plate starts at 508 and its padding plus title,
+  status, and stack (≈ 97px) are fully visible, with room to spare. **With chips present** (5+
+  projects only) the chips add 76px and the plate's title sits right at the fold — accepted,
+  because chips only appear once the list is long enough to need them, and the lead plate is
+  still the first thing after them.
+- **320×568:** nav (56) + hero (364) + band pad (64) + heading and margin (56) = 540px against
   ≈ 468px visible, so the Projects heading lands just below the fold and the lead plate needs one
   short scroll. That is the accepted floor: the hero never grows past this, and no arrangement of
   the grid can bring the plate above the fold on a 568px-tall screen without shrinking the hero
   copy (which the first-screen rules forbid).
-- **768px and up:** the hero, heading, and the entire lead plate row (including its screenshot)
-  are visible in the first screen; the two-column row begins below.
+- **768px and up:** the hero, the heading, and the lead plate's screenshot all start inside the
+  first screen, so the strongest proof is visible almost immediately; the plate's title and stack
+  follow as the reader scrolls into the grid, and the two-column row begins below them.
 
 ## Review pass
 
 ### Against the Banned list
 
-- **No gradients.** Flat color fills only; the dot grid is an SVG pattern of flat dots, bands
-  are flat colors, and the tint plate is a flat alpha wash. Confirmed: no gradient function in
-  any stylesheet, and none will appear in code.
+- **No gradients.** Flat color fills only; the dot grid is an SVG pattern of flat dots and bands
+  are flat colors. Confirmed: no gradient function in any stylesheet, and none will appear in code.
 - **No emojis.** Confirmed anywhere in UI, copy, README, comments, and seed data.
 - No glassmorphism, blur, glow, or drop shadows — structure comes from hairlines, flat bands,
   and space; `backdrop-filter` is banned even for the panel scrim.
@@ -702,6 +759,52 @@ case pages with no summary above them (the plate is the summary, and the panel i
 - **The image script anchors its crop to the top** and leaves an already-16:10 source uncropped.
 - **A featured project without an image renders cleanly** — no empty box, no placeholder, no gap.
 
+### Third review pass (full audit against AGENTS.md)
+
+An audit of the whole site against the Banned list, the design rules, and the Definition of done
+found the built page consistent with the plan except in the places listed here. Everything below
+was fixed in this pass; the deferred items are named at the end.
+
+- **The background system was specified but never built.** The bands and the hero dot grid were
+  two paragraphs of this document and were absent from the page. Both are built now (see *Section
+  bands* and *Background elements* above). The third element specified in that pass, the
+  accent-tint plate behind the hero's action row, was built and then cut the same day after
+  review: in dark theme it composited within a few RGB steps of the `surface` band and its 8px
+  outdent broke the left spine. *Background elements* records the reasoning.
+- **The P2 heading wipes were missing** while P2 was marked done: only the content reveals
+  existed. Section headings now wipe in with `clip-path` through the same `useReveal` contract as
+  the plates, so a blocked chunk still shows a complete heading.
+- **`Profile.bio` was required and rendered nowhere.** Worse, the guard required it, so deleting
+  a field that never appears would have thrown and replaced the whole hero with an error state.
+  It is optional now, the placeholder sentence is gone from `profile.json`, and the reason is
+  recorded in `src/types.ts`: the hero is budgeted to four lines, and a bio paragraph would push
+  the lead plate's stack below the fold at 390px. A later "about" line can read the field without
+  a data change.
+- **The two underlines that carry the "this is a link" cue were drawn in `--border`**, the color
+  this document declares decorative-only and exempt from 3:1 (1.27:1 light, 1.44:1 dark). A cue
+  that carries information cannot be drawn with a decorative value: the contact row labels and the
+  footer link now underline in `muted` (5.64–6.41:1), and the accent still takes over on hover and
+  press.
+- **The nav monogram is gone.** It was not in either wireframe, it was `aria-hidden` (so it said
+  nothing to assistive tech), it repeated the h1's name, it was not a link, and it was the only
+  reason the nav fetched the profile — a second `getProfile()` call, and in Phase 3 a second
+  request for the same payload. Removing it left the nav with no data dependency at all.
+- **`body` had `min-height: 100svh` with no fallback**, against the rule that `svh`/`dvh` always
+  ships with a `100vh` line before it.
+- **Verified clean, not just claimed:** all 38 text and UI pairings (both themes) computed from
+  the tokens — every one passes; zero gradient functions and zero emojis in the shipped output;
+  one global `:focus-visible` ring and no `outline: none` anywhere; reduced motion turns off the
+  hero keyframes, every reveal, the plate layout animation, and the shared-element morph; the
+  pointer-only screenshot shortcut does not trip axe's `aria-hidden-focus` (its checks read
+  `tabbableElements`, and `tabindex="-1"` is focusable but not tabbable — confirmed in the
+  axe-core source); no `max-width` media queries anywhere; `100vh` appears once, as the documented
+  fallback behind `100dvh` in the panel; every tap target is ≥ 44px; no scroll listeners, no
+  looping animation, no `will-change`, no `backdrop-filter`.
+- **Still deferred, by its own rule:** motion rule 4 keeps P4 to P6 until P1 to P3 are right. The
+  filter reflow and the More-projects rows are built; still to build are the chip stagger (P4),
+  the nav's sliding underline bar (P5), and the hover arrow, 4px screenshot shift, plate tint, and
+  plate press tint (P6).
+
 ## Data model deltas (for the type layer and the guard)
 
 - `Project.image` — optional, expected on every `featured` project; `{w}` template. Its absence
@@ -712,3 +815,6 @@ case pages with no summary above them (the plate is the summary, and the panel i
 - `Project.demo` — optional URL; rendered as a link in the detail panel, never autoplayed.
 - `Project.featured` — unchanged, but at most 4 are shown in the grid; the rest, plus every
   non-featured project, render in the More-projects list.
+- `Profile.bio` — **optional and not rendered.** The hero is budgeted to four lines (see the
+  height budget), so a bio paragraph has no place on the first screen; the guard no longer
+  requires the field, which means removing it from `profile.json` cannot break the page.

@@ -38,7 +38,13 @@ export interface Profile {
   headline: string;
   /** The separate hero line stating what kind of role is being sought. */
   lookingFor: string;
-  bio: string;
+  /**
+   * Optional and not rendered: the first screen is budgeted to four lines (see
+   * the height budget in DESIGN.md), and a bio paragraph would push the lead
+   * project's title, status, and stack past the fold on a 390px phone. It is
+   * kept in the type so a later "about" line can read it without a data change.
+   */
+  bio?: string;
   currentlyLearning?: string;
   resumeUrl?: string;
 }

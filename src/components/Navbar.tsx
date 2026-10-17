@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { getProfile } from "../api";
-import { useAsync } from "../hooks/useAsync";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Navbar.module.css";
 
@@ -11,8 +9,6 @@ const SECTIONS = [
 ] as const;
 
 export const Navbar = () => {
-  // The monogram is derived from data, never hardcoded in the component.
-  const { data: profile } = useAsync(getProfile);
   const [activeId, setActiveId] = useState<string | null>(null);
   const visible = useRef<Set<string>>(new Set());
 
@@ -45,21 +41,9 @@ export const Navbar = () => {
     };
   }, []);
 
-  const monogram = profile
-    ? profile.name
-        .split(/\s+/)
-        .map((word) => word.charAt(0))
-        .join("")
-        .slice(0, 2)
-    : "";
-
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
-        {/* Decorative: the hero h1 already carries the name to assistive tech. */}
-        <span className={styles.logo} aria-hidden="true">
-          {monogram}
-        </span>
         <nav aria-label="Sections">
           <ul className={styles.links}>
             {SECTIONS.map(({ id, label }) => (

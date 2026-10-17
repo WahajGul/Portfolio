@@ -113,6 +113,10 @@ html {
 }
 
 body {
+  /* 100vh first as the fallback: a browser without svh support (Safari before
+     15.4) still gets a full-height body, and its extra address-bar height only
+     ever makes the page taller than it needs to be. */
+  min-height: 100vh;
   min-height: 100svh;
   background: var(--background);
   color: var(--text);
@@ -199,6 +203,28 @@ a {
   margin-inline: auto;
   padding-inline: max(0px, env(safe-area-inset-left))
     max(0px, env(safe-area-inset-right));
+}
+
+/* ---------------------------------------------------- section bands -- */
+/* Flat full-bleed strata (DESIGN.md: alternating background and surface).
+   A band paints edge to edge and carries the section's own vertical room; the
+   container inside it holds the column of content. The hero, the Skills band,
+   and the footer are `background`, which is also the body color, so they need
+   no band rule at all — only the surface bands do. */
+/* Section rhythm. AGENTS.md asks for `clamp()` on section spacing, and it does
+   real work here: 6vw stays under the 64px floor until roughly a 1070px
+   viewport, so phones and tablets get one extra 16px step of room between
+   sections (128px instead of 96px — a bordered control like the More-projects
+   button needs it), and desktop bands open up to 80px a side (a 160px gap).
+   The hero is not a band — it owns its padding — so the first screen changes
+   only by the Projects band's own top padding, which DESIGN.md's fold math
+   accounts for. */
+.band {
+  padding-block: clamp(var(--space-16), 6vw, var(--space-20));
+}
+
+.band-surface {
+  background: var(--surface);
 }
 
 /* Removed from view, kept for assistive tech (new-tab notes, live values). */

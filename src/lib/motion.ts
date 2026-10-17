@@ -40,3 +40,16 @@ export const revealRise: Variants = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0 },
 };
+
+/* --duration-signature (400ms): the heading wipe is the same length as one step
+   of the hero's entrance. */
+export const HEADING_DURATION = 0.4;
+
+/* A section heading wipes in left to right and nothing else moves: the reveal
+   underneath it carries the rise, so the two never look like one gesture. Only
+   clip-path animates, and the hidden end is applied through useReveal, never in
+   the base CSS. */
+export const headingWipe: Variants = {
+  hidden: { clipPath: "inset(0 100% 0 0)" },
+  visible: { clipPath: "inset(0 0 0 0)" },
+};

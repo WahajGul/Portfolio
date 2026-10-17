@@ -59,6 +59,7 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
+  --space-20: 5rem;
 
   /* Radius scale with roles: 0 structure, 4px controls, 8px media */
   --radius-structure: 0;

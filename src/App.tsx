@@ -1,11 +1,21 @@
 import { useRef, useState } from "react";
 import { LazyMotion, type FeatureBundle } from "framer-motion";
+import { ContactSection } from "./components/ContactSection";
 import { Hero } from "./components/Hero";
 import { Navbar } from "./components/Navbar";
 import { ProjectsSection } from "./components/ProjectsSection";
+import { SkillsSection } from "./components/SkillsSection";
 import { ThemeProvider } from "./context/ThemeContext";
 import { MotionReadyContext } from "./hooks/useMotionReady";
 import styles from "./App.module.css";
+
+/* Site configuration, not page content: the repository this page is served
+   from. Content lives in src/data and is read through the hooks. */
+const REPOSITORY_URL = "https://github.com/WahajGul/Portfolio";
+
+/* Read once, when the module loads: the footer is static, and reading the clock
+   during a render is impure. */
+const YEAR = new Date().getFullYear();
 
 /** Tops out how long a busy browser may put the motion chunk off. */
 const IDLE_TIMEOUT = 1000;
@@ -28,9 +38,9 @@ const whenIdle = (): Promise<void> =>
     setTimeout(resolve, IDLE_FALLBACK_DELAY);
   });
 
-// Phase 1 shell: hero and projects are wired to the data layer; skills and
-// contact arrive in the next steps. The structure (landmarks, ids the nav
-// targets, footer) is final.
+// Phase 1 shell: every section reads through the hooks in src/hooks, which call
+// src/api/index.ts. The structure (landmarks, ids the nav targets, footer) is
+// final, so wiring the data layer to a real API later touches no markup here.
 export const App = () => {
   const [motionReady, setMotionReady] = useState(false);
   const features = useRef<Promise<FeatureBundle> | null>(null);
@@ -67,34 +77,29 @@ export const App = () => {
             Skip to content
           </a>
           <Navbar />
-          {/* tabindex=-1 so the skip link moves focus here, not just scroll. */}
-          <main id="content" tabIndex={-1} className={`container ${styles.main}`}>
+          {/* tabindex=-1 so the skip link moves focus here, not just scroll.
+              No container class: each section is a full-bleed band that holds
+              its own container, so the flat colors run edge to edge. */}
+          <main id="content" tabIndex={-1} className={styles.main}>
             <Hero />
             <ProjectsSection />
-
-            <section id="skills" aria-labelledby="skills-heading">
-              <h2 id="skills-heading" className="section-heading">
-                Skills
-              </h2>
-              <p className={styles.placeholder}>
-                Skill groups arrive in the next step.
-              </p>
-            </section>
-
-            <section id="contact" aria-labelledby="contact-heading">
-              <h2 id="contact-heading" className="section-heading">
-                Contact
-              </h2>
-              <p className={styles.placeholder}>
-                Contact links arrive in the next step.
-              </p>
-            </section>
+            <SkillsSection />
+            <ContactSection />
           </main>
+          {/* No rule above the footer: DESIGN.md's bands separate regions by
+              flat color, and the footer is its own band. */}
           <footer className={styles.footer}>
-            <div className="container">
-              <p className={styles.placeholder}>
-                Footer content arrives in the footer step.
-              </p>
+            <div className={`container ${styles.footerInner}`}>
+              <p className={styles.footerNote}>&copy; {YEAR}</p>
+              <a
+                className={styles.footerLink}
+                href={REPOSITORY_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Source code
+                <span className="visually-hidden"> (opens in a new tab)</span>
+              </a>
             </div>
           </footer>
         </LazyMotion>

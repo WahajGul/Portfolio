@@ -17,41 +17,55 @@ export const Hero = () => {
 
   return (
     <section id="hero" className={styles.hero} aria-label="Introduction">
-      {loading && <Loading />}
-      {error !== null && <ErrorState />}
-      {!loading && error === null && profile !== null && (
-        <>
-          <h1 className={`${styles.name} ${styles.wipe}`}>{profile.name}</h1>
-          <p className={`${styles.headline} ${styles.wipe} ${styles.wipeStep1}`}>
-            {profile.headline}
-          </p>
-          <p className={`${styles.wipe} ${styles.wipeStep1}`}>{profile.lookingFor}</p>
-          {profile.currentlyLearning !== undefined && (
-            <p className={`${styles.learning} ${styles.wipe} ${styles.wipeStep2}`}>
-              Currently learning: {profile.currentlyLearning}
+      {/* The hero's dot grid: one of the page's three background elements
+          (DESIGN.md). Static, aria-hidden, and it covers the hero's top padding
+          strip only, so no text ever sits on it. */}
+      <svg className={styles.dots} aria-hidden="true" focusable="false">
+        <defs>
+          <pattern id="hero-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle className={styles.dot} cx="1" cy="1" r="1" />
+          </pattern>
+        </defs>
+        <rect className={styles.dotFill} width="100%" height="100%" />
+      </svg>
+
+      <div className={`container ${styles.inner}`}>
+        {loading && <Loading />}
+        {error !== null && <ErrorState />}
+        {!loading && error === null && profile !== null && (
+          <>
+            <h1 className={`${styles.name} ${styles.wipe}`}>{profile.name}</h1>
+            <p className={`${styles.headline} ${styles.wipe} ${styles.wipeStep1}`}>
+              {profile.headline}
             </p>
-          )}
-          <div className={styles.actions}>
-            <a className={`${styles.button} ${styles.primary}`} href="#projects">
-              View projects
-            </a>
-            <a className={`${styles.button} ${styles.secondary}`} href="#contact">
-              Contact
-            </a>
-            {profile.resumeUrl !== undefined && (
-              <a
-                className={`${styles.button} ${styles.secondary}`}
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Resume
-                <span className="visually-hidden"> (opens in a new tab)</span>
-              </a>
+            <p className={`${styles.wipe} ${styles.wipeStep1}`}>{profile.lookingFor}</p>
+            {profile.currentlyLearning !== undefined && (
+              <p className={`${styles.learning} ${styles.wipe} ${styles.wipeStep2}`}>
+                Currently learning: {profile.currentlyLearning}
+              </p>
             )}
-          </div>
-        </>
-      )}
+            <div className={styles.actions}>
+              <a className={`${styles.button} ${styles.primary}`} href="#projects">
+                View projects
+              </a>
+              <a className={`${styles.button} ${styles.secondary}`} href="#contact">
+                Contact
+              </a>
+              {profile.resumeUrl !== undefined && (
+                <a
+                  className={`${styles.button} ${styles.secondary}`}
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Resume
+                  <span className="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </section>
   );
 };

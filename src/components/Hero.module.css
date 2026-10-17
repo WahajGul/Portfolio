@@ -46,11 +46,38 @@
 }
 
 .hero {
+  /* The dot grid is positioned against this box. */
+  position: relative;
+  padding-block: var(--space-8) var(--space-10);
+}
+
+.inner {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
-  padding-block: var(--space-8) var(--space-10);
+}
+
+/* The hero's own dot grid (DESIGN.md, background element 2): a 24px pattern of
+   1px dots in the hairline color, faded so it stays texture rather than
+   information, and only as tall as the hero's top padding — it is never behind
+   the name, the headline, or any body text. Static: nothing here animates. */
+.dots {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  width: 100%;
+  height: var(--space-6);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.dot {
+  fill: var(--border);
+}
+
+.dotFill {
+  fill: url(#hero-dots);
 }
 
 .name {
@@ -68,7 +95,11 @@
   color: var(--muted);
 }
 
-/* 8px extra above the actions: the buttons are a group, not another line. */
+/* 8px extra above the actions: the buttons are a group, not another line.
+   Nothing is filled behind them: the accent-tint plate this design once called
+   for is gone, because in dark theme its composite lands within a few RGB
+   steps of the surface band and reads as a stray band rather than a highlight
+   (see DESIGN.md, background elements). */
 .actions {
   display: flex;
   flex-wrap: wrap;

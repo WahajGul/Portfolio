@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { AnimatePresence, m } from "framer-motion";
 import { getProjects } from "../api";
 import { useAsync } from "../hooks/useAsync";
+import { useReveal } from "../hooks/useReveal";
+import { EASE_OUT, HEADING_DURATION, headingWipe } from "../lib/motion";
 import type { Project } from "../types";
 import { ProjectDetail } from "./ProjectDetail";
 import { ProjectRow, type PlateSpan } from "./ProjectRow";
@@ -57,6 +59,10 @@ export const ProjectsSection = () => {
   // The control that opened the panel, so focus can be handed back to it. It is
   // state rather than a ref because the panel receives it as a prop.
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
+  // The heading wipes in left to right like the hero's lines, on the same
+  // visible-by-default contract as the plates below it.
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const headingReveal = useReveal(headingRef);
 
   const list = projects ?? [];
   // Chips are derived — never hardcoded — from every stack string in first-seen
@@ -81,109 +87,130 @@ export const ProjectsSection = () => {
   };
 
   return (
-    <section id="projects" aria-labelledby="projects-heading" aria-busy={loading}>
-      <h2 id="projects-heading" className="section-heading">
-        Projects
-      </h2>
+    <section
+      id="projects"
+      className="band band-surface"
+      aria-labelledby="projects-heading"
+      aria-busy={loading}
+    >
+      <div className="container">
+        <m.h2
+          id="projects-heading"
+          ref={headingRef}
+          className="section-heading"
+          // Visible by default; stepping to "hidden" is instant and only ever
+          // happens to a heading still below the fold when the chunk lands.
+          initial={false}
+          animate={headingReveal}
+          variants={headingWipe}
+          transition={
+            headingReveal === "hidden"
+              ? { duration: 0 }
+              : { clipPath: { duration: HEADING_DURATION, ease: EASE_OUT } }
+          }
+        >
+          Projects
+        </m.h2>
 
-      {loading && <ProjectsSkeleton />}
-      {error !== null && <ErrorState />}
+        {loading && <ProjectsSkeleton />}
+        {error !== null && <ErrorState />}
 
-      {!loading && error === null && (
-        <>
-          {list.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <>
-              {list.length >= CHIP_MINIMUM && (
-                <div
-                  className={styles.chips}
-                  role="group"
-                  aria-label="Filter projects by technology"
-                >
-                  <button
-                    type="button"
-                    className={`${styles.chip} ${filter === null ? styles.chipSelected : ""}`}
-                    aria-pressed={filter === null}
-                    onClick={() => setFilter(null)}
+        {!loading && error === null && (
+          <>
+            {list.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <>
+                {list.length >= CHIP_MINIMUM && (
+                  <div
+                    className={styles.chips}
+                    role="group"
+                    aria-label="Filter projects by technology"
                   >
-                    All
-                  </button>
-                  {techs.map((tech) => (
                     <button
-                      key={tech}
                       type="button"
-                      className={`${styles.chip} ${filter === tech ? styles.chipSelected : ""}`}
-                      aria-pressed={filter === tech}
-                      onClick={() => setFilter(tech)}
+                      className={`${styles.chip} ${filter === null ? styles.chipSelected : ""}`}
+                      aria-pressed={filter === null}
+                      onClick={() => setFilter(null)}
                     >
-                      {tech}
+                      All
                     </button>
-                  ))}
-                </div>
-              )}
-
-              {grid.length > 0 && (
-                <div className={styles.grid}>
-                  {/* popLayout takes an exiting plate out of flow in the same
-                      frame, so the rest glide to their new spans immediately. */}
-                  <AnimatePresence mode="popLayout">
-                    {grid.map((project, index) => (
-                      <ProjectRow
-                        key={project.id}
-                        project={project}
-                        span={spans[index]}
-                        lead={index === 0}
-                        index={index}
-                        onOpen={openPanel}
-                      />
+                    {techs.map((tech) => (
+                      <button
+                        key={tech}
+                        type="button"
+                        className={`${styles.chip} ${filter === tech ? styles.chipSelected : ""}`}
+                        aria-pressed={filter === tech}
+                        onClick={() => setFilter(tech)}
+                      >
+                        {tech}
+                      </button>
                     ))}
-                  </AnimatePresence>
-                </div>
-              )}
+                  </div>
+                )}
 
-              {matching.length === 0 && (
-                <p className={styles.noMatches}>
-                  No projects match {filter}. Choose All to see every project.
-                </p>
-              )}
-
-              {more.length > 0 && (
-                <>
-                  {filtering ? (
-                    <h3 className={styles.moreHeading}>Other projects</h3>
-                  ) : (
-                    <button
-                      type="button"
-                      className={styles.expander}
-                      aria-expanded={moreOpen}
-                      aria-controls="more-projects"
-                      onClick={() => setMoreOpen((open) => !open)}
-                    >
-                      {moreOpen
-                        ? `Hide more projects (${more.length})`
-                        : `More projects (${more.length})`}
-                    </button>
-                  )}
-
-                  {moreExpanded && (
-                    <div id="more-projects" className={styles.moreList}>
-                      {more.map((project, index) => (
+                {grid.length > 0 && (
+                  <div className={styles.grid}>
+                    {/* popLayout takes an exiting plate out of flow in the same
+                        frame, so the rest glide to their new spans immediately. */}
+                    <AnimatePresence mode="popLayout">
+                      {grid.map((project, index) => (
                         <ProjectRow
                           key={project.id}
                           project={project}
-                          variant="row"
+                          span={spans[index]}
+                          lead={index === 0}
                           index={index}
+                          onOpen={openPanel}
                         />
                       ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {matching.length === 0 && (
+                  <p className={styles.noMatches}>
+                    No projects match {filter}. Choose All to see every project.
+                  </p>
+                )}
+
+                {more.length > 0 && (
+                  <>
+                    {filtering ? (
+                      <h3 className={styles.moreHeading}>Other projects</h3>
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.expander}
+                        aria-expanded={moreOpen}
+                        aria-controls="more-projects"
+                        onClick={() => setMoreOpen((open) => !open)}
+                      >
+                        {moreOpen
+                          ? `Hide more projects (${more.length})`
+                          : `More projects (${more.length})`}
+                      </button>
+                    )}
+
+                    {moreExpanded && (
+                      <div id="more-projects" className={styles.moreList}>
+                        {more.map((project, index) => (
+                          <ProjectRow
+                            key={project.id}
+                            project={project}
+                            variant="row"
+                            index={index}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
 
       {/* The panel is mounted only while it is open, so the shared-element morph
           always travels between the plate and a freshly mounted panel. */}

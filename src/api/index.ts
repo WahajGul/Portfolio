@@ -97,7 +97,7 @@ const isProfile = (value: unknown): value is Profile =>
   isNonEmptyString(value.name) &&
   isNonEmptyString(value.headline) &&
   isNonEmptyString(value.lookingFor) &&
-  isNonEmptyString(value.bio) &&
+  (value.bio === undefined || isNonEmptyString(value.bio)) &&
   (value.currentlyLearning === undefined || isNonEmptyString(value.currentlyLearning)) &&
   (value.resumeUrl === undefined || isNonEmptyString(value.resumeUrl));
 
@@ -137,7 +137,7 @@ export const getContacts = async (): Promise<Contact[]> => {
 export const getProfile = async (): Promise<Profile> => {
   if (!isProfile(profileJson)) {
     throw new Error(
-      "[data] profile.json is invalid; check the required fields (name, headline, lookingFor, bio)"
+      "[data] profile.json is invalid; check the required fields (name, headline, lookingFor)"
     );
   }
   return profileJson;

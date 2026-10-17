@@ -28,7 +28,7 @@ Each list is one file. Editing it is the whole job — no component knows what i
 | Projects (title, description, stack, links, status)  | `src/data/projects.json`   |
 | Skill groups                                         | `src/data/skills.json`     |
 | Contact links                                        | `src/data/contacts.json`   |
-| Name, headline, what I am looking for, resume, bio    | `src/data/profile.json`    |
+| Name, headline, what I am looking for, resume        | `src/data/profile.json`    |
 
 Entries that do not match the types in `src/types.ts` are dropped with a `console.warn` naming the
 offending `id`, so a typo in data cannot take the page down. One deliberate exception: a project
@@ -64,6 +64,61 @@ is the bad data, not the project.
   optional fields simply do not render — no empty boxes, no dead buttons.
 - The filter chips are derived from the `stack` values themselves, in first-seen order. They appear
   once there are five or more projects. Nothing is hardcoded.
+
+### Skills
+
+```json
+{ "group": "Frontend", "items": ["React", "TypeScript", "Vite"] }
+```
+
+- Groups render in file order, one column on phones and two from 640px up.
+- A group is a heading and one wrapped list of items. No bars, no stars, no percentages, no icons —
+  there is no honest way to score a skill, so the site does not pretend to.
+- Group names are used exactly as written, so your capitalization is the capitalization on screen.
+
+### Contacts
+
+```json
+{
+  "id": "email",
+  "label": "Email",
+  "value": "me@example.com",
+  "href": "mailto:me@example.com",
+  "icon": "mail"
+}
+```
+
+- A new entry appears with no code change: `label` is the channel name, `value` is what the row
+  shows, and `href` is the real link.
+- `mailto:` and `tel:` links are handed to the browser untouched, so the mail app and the phone
+  dialer open. Every other address opens in a new tab.
+- `icon` accepts `mail`, `phone`, or `globe`. Anything else — including `github` and `linkedin`,
+  which lucide no longer ships as brand marks — falls back to a plain link icon.
+- The `Copy email` button appears on any `mailto:` entry, and its confirmation is both shown and
+  announced to screen readers.
+
+### The profile
+
+```json
+{
+  "name": "Wahaj Gul",
+  "headline": "React and TypeScript on the front end.",
+  "lookingFor": "Looking for a React developer role.",
+  "currentlyLearning": "Docker, Linux, Node",
+  "resumeUrl": "https://example.com/resume.pdf"
+}
+```
+
+- `name`, `headline`, and `lookingFor` are required; `currentlyLearning` and `resumeUrl` are
+  optional and simply do not render when missing.
+- `bio` is accepted but **not rendered**: the first screen is budgeted to the four lines above so
+  the lead project stays in view on a 390px phone. It is optional, and deleting it is safe.
+- Keep the headline to one line of role and focus, and keep `currentlyLearning` to a short list.
+
+### The footer
+
+The year and a link to the repository. These are site configuration rather than page content: the
+URL is the `REPOSITORY_URL` constant near the top of `src/App.tsx`.
 
 ## Screenshots
 
@@ -108,9 +163,14 @@ Phase 3 adds `VITE_API_URL`.
 - Dark and light themes come from CSS variables, default to `prefers-color-scheme`, and remember an
   explicit choice. Both are designed, not inverted.
 - Motion is one animation library (Framer Motion), loaded only after the first screen is painted,
-  plus CSS keyframes for the hero. Reveals are visible by default and only enhanced once that
-  library has loaded, so a slow or blocked script still shows a complete page.
-- Reduced motion turns the signature entrance, reveals, and the panel transition off, and every
-  layout stays readable.
+  plus CSS keyframes for the hero. Section headings wipe in and the content below them reveals,
+  both visible by default and only enhanced once that library has loaded, so a slow or blocked
+  script still shows a complete page.
+- Reduced motion turns the signature entrance, reveals, the heading wipes, and the panel
+  transition off, and every layout stays readable.
+- The background is a fixed set of two flat elements: the alternating `background` / `surface`
+  section bands and the hero's dot grid. There are no gradients, no shadows, and no other
+  decoration to add to. A third element was tried and cut — see the note in `DESIGN.md` under
+  "Background elements" for why.
 - The palette, type scale, spacing, and motion durations live in `src/styles/tokens.css` and
   nowhere else.

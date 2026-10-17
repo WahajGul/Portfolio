@@ -1,0 +1,144 @@
+/*
+ * The Contact section: one row per contact link from contacts.json, on
+ * hairlines. Every row is a real link — mailto: and tel: are handed straight to
+ * the browser — and an email row also carries the copy button. Tap targets are
+ * 44px, and a long address wraps instead of widening the page.
+ */
+
+.contacts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* The channel mark sits outside the link, so the link's own name stays the
+   channel name followed by the value it points at. */
+.icon {
+  flex: none;
+  color: var(--muted);
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Wide enough to matter, small enough to let the copy button wrap on a
+     phone rather than squeeze the address to nothing. */
+  flex: 1 1 12rem;
+  min-height: 44px;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* The underline is the non-color cue that this row is a link: it is there on
+   touch, where hover never happens, and the accent only confirms it. Drawn in
+   muted (6:1 on the band) because it carries information — the decorative
+   hairline color would barely show. */
+.label {
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--muted);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
+.value {
+  color: var(--muted);
+  font-size: var(--text-meta);
+  overflow-wrap: anywhere;
+}
+
+/* --- copy email --- */
+
+.copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  /* Keeps the button (and its confirmation) at the row's end when the row
+     wraps onto a second line. */
+  margin-left: auto;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline: var(--space-4);
+  background: transparent;
+  border: 1px solid var(--muted);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Empty until something happens, so it takes no space and can still be
+   announced the moment it is filled. */
+.copyStatus {
+  color: var(--muted);
+  font-size: var(--text-meta);
+  overflow-wrap: anywhere;
+}
+
+/* --- loading skeleton --- */
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeletonRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.skelBar {
+  display: block;
+  height: 1rem;
+  width: 100%;
+  background: var(--border);
+}
+
+.skelLabel {
+  width: 30%;
+}
+
+/* --- pointer states ---
+   Hover exists only where a real pointer does; :active covers touch. */
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover .label {
+    text-decoration-color: var(--accent);
+  }
+
+  .copyButton:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+.link:active .label {
+  text-decoration-color: var(--accent);
+}
+
+.copyButton:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
