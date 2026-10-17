@@ -1,0 +1,85 @@
+/*
+ * The Skills section: a compact grouped list. One column on phones, two from
+ * 640px up; the group name carries the hierarchy and the items sit a step
+ * quieter. No bars, no stars, no icons, no borders — this is a list, and it
+ * looks like one.
+ */
+
+.groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6) var(--space-8);
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .groups {
+    /* minmax(0, 1fr) so one long tool name can never widen a column. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.groupName {
+  font-size: var(--text-body);
+  /* Registered names are capitalized by their authors: no text-transform. */
+  overflow-wrap: anywhere;
+}
+
+/* Items are one plain wrapped list, joined by commas like a project's stack
+   line, so the two lists in the page read as the same kind of thing. */
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: var(--text-meta);
+}
+
+.items li:not(:last-child)::after {
+  content: ", ";
+}
+
+.items li {
+  overflow-wrap: anywhere;
+}
+
+/* --- loading skeleton --- */
+
+.skeleton {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6) var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .skeleton {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.skeletonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skelBar {
+  display: block;
+  height: 1rem;
+  width: 100%;
+  background: var(--border);
+}
+
+.skelHeading {
+  width: 40%;
+}

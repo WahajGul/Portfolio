@@ -1,0 +1,271 @@
+/*
+ * global.css — fonts, reset, base typography, shared utilities.
+ * All color and motion values come from tokens.css; nothing is repeated here.
+ */
+
+/* ---------------------------------------------------------------- fonts -- */
+/* Self-hosted, Latin-only woff2 subsets (see public/fonts). The display face
+   is preloaded in index.html; both families load with font-display: swap.
+   The two "Fallback" faces wrap local Arial and carry metrics measured from
+   the shipped files (via fontkit against Arial's hhea/OS-2 constants), so the
+   swap does not shift layout. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque-600-latin.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque-700-latin.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/public-sans-400-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/public-sans-600-latin.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* One fallback face per weight, each tuned to the real file's metrics. */
+@font-face {
+  font-family: "Bricolage Grotesque Fallback";
+  src: local("Arial");
+  font-weight: 600;
+  font-style: normal;
+  size-adjust: 100.857%;
+  ascent-override: 92.21%;
+  descent-override: 26.771%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque Fallback";
+  src: local("Arial");
+  font-weight: 700;
+  font-style: normal;
+  size-adjust: 101.243%;
+  ascent-override: 91.858%;
+  descent-override: 26.669%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Public Sans Fallback";
+  src: local("Arial");
+  font-weight: 400 600;
+  font-style: normal;
+  size-adjust: 99.7%;
+  ascent-override: 95.286%;
+  descent-override: 22.568%;
+  line-gap-override: 0%;
+}
+
+/* ---------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Anchor links land below the sticky nav, never under it. */
+  scroll-padding-top: calc(var(--nav-height) + var(--space-4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  /* 100vh first as the fallback: a browser without svh support (Safari before
+     15.4) still gets a full-height body, and its extra address-bar height only
+     ever makes the page taller than it needs to be. */
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  /* Long emails, URLs, and tech names must never overflow the layout. */
+  overflow-wrap: break-word;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* Removes the 300ms tap delay on touch devices. */
+a,
+button {
+  touch-action: manipulation;
+}
+
+/* ------------------------------------------------------------- base type -- */
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  text-wrap: balance;
+}
+
+/* Section and project headings sit one step lighter than the name, so the
+   600 weight is used but loads on demand (only the h1's 700 is preloaded). */
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------- utilities -- */
+
+/* Visible only to keyboard users; first in the tab order. */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  font-weight: 600;
+  transform: translateY(calc(-100% - var(--space-4)));
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Centered page column: min(100% - 2rem, 64rem), safe-area aware. */
+.container {
+  width: min(100% - 2rem, var(--container-width));
+  margin-inline: auto;
+  padding-inline: max(0px, env(safe-area-inset-left))
+    max(0px, env(safe-area-inset-right));
+}
+
+/* ---------------------------------------------------- section bands -- */
+/* Flat full-bleed strata (DESIGN.md: alternating background and surface).
+   A band paints edge to edge and carries the section's own vertical room; the
+   container inside it holds the column of content. The hero, the Skills band,
+   and the footer are `background`, which is also the body color, so they need
+   no band rule at all — only the surface bands do. */
+/* Section rhythm. AGENTS.md asks for `clamp()` on section spacing, and it does
+   real work here: 6vw stays under the 64px floor until roughly a 1070px
+   viewport, so phones and tablets get one extra 16px step of room between
+   sections (128px instead of 96px — a bordered control like the More-projects
+   button needs it), and desktop bands open up to 80px a side (a 160px gap).
+   The hero is not a band — it owns its padding — so the first screen changes
+   only by the Projects band's own top padding, which DESIGN.md's fold math
+   accounts for. */
+.band {
+  padding-block: clamp(var(--space-16), 6vw, var(--space-20));
+}
+
+.band-surface {
+  background: var(--surface);
+}
+
+/* Removed from view, kept for assistive tech (new-tab notes, live values). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Shared section heading rhythm; each section keeps its own h2 and id. */
+.section-heading {
+  font-size: var(--text-section);
+  margin-bottom: var(--space-6);
+}
+
+/* Every focusable control gets the same visible ring. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Anchor targets are offset by html's scroll-padding-top in this file;
+   a per-section scroll-margin would stack on top of it and overshoot. */
+
+/* Smooth in-page jumps are motion too: off when the user opts out. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

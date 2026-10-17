@@ -1,0 +1,56 @@
+/* Page shell. No container and no vertical rhythm of its own: every section is
+   a full-bleed band that carries its own padding (see .band in global.css), so
+   the bands abut and the flat colors do the separating. */
+
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  /* No divider of its own: DESIGN.md's bands separate regions by flat color,
+     and the footer is its own band. The space above it does the rest. */
+  padding-block: var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+}
+
+/* Year and repository link, on one line until the line runs out of room. */
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.footerNote {
+  color: var(--muted);
+  font-size: var(--text-meta);
+}
+
+.footerLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  /* The underline is the non-color cue here, so it is drawn in the same muted
+     value the text uses (6:1 on the band) rather than in the decorative
+     hairline color, which would barely show. */
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .footerLink:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+}
+
+.footerLink:active {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}

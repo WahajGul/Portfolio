@@ -1,0 +1,147 @@
+/*
+ * Hero: content-height only — vertical padding plus content. No viewport-
+ * relative height anywhere, and no min-height (see the height budget in
+ * DESIGN.md: the Projects heading and the first row stay visible at 390x844).
+ *
+ * The signature moment lives here as keyframes rather than in Framer Motion,
+ * so the first screen animates without the motion chunk. Timing comes from
+ * tokens.css and is not repeated.
+ */
+
+@keyframes wipe-rise {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: translateY(12px);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+/* One 400ms wipe of the line's own box, left to right, with a 12px rise.
+   fill-mode both: a delayed step holds its start state instead of flashing in
+   ahead of the wipe, and the first step (no delay) starts at the first paint.
+   Only clip-path and transform animate. */
+.wipe {
+  animation: wipe-rise var(--duration-signature) var(--ease-out) both;
+}
+
+/* Name 0ms, headline and looking-for 90ms, learning line 180ms. */
+.wipeStep1 {
+  animation-delay: var(--stagger);
+}
+
+.wipeStep2 {
+  animation-delay: calc(var(--stagger) * 2);
+}
+
+/* global.css already flattens every animation duration here; switching the
+   wipe off outright keeps the hero from depending on that. */
+@media (prefers-reduced-motion: reduce) {
+  .wipe {
+    animation: none;
+  }
+}
+
+.hero {
+  /* The dot grid is positioned against this box. */
+  position: relative;
+  padding-block: var(--space-8) var(--space-10);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* The hero's own dot grid (DESIGN.md, background element 2): a 24px pattern of
+   1px dots in the hairline color, faded so it stays texture rather than
+   information, and only as tall as the hero's top padding — it is never behind
+   the name, the headline, or any body text. Static: nothing here animates. */
+.dots {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  width: 100%;
+  height: var(--space-6);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.dot {
+  fill: var(--border);
+}
+
+.dotFill {
+  fill: url(#hero-dots);
+}
+
+.name {
+  font-size: var(--text-name);
+  line-height: var(--leading-name);
+}
+
+.headline {
+  font-size: var(--text-headline);
+  line-height: var(--leading-headline);
+}
+
+.learning {
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+
+/* 8px extra above the actions: the buttons are a group, not another line.
+   Nothing is filled behind them: the accent-tint plate this design once called
+   for is gone, because in dark theme its composite lands within a few RGB
+   steps of the surface band and reads as a stray band rather than a highlight
+   (see DESIGN.md, background elements). */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.secondary {
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+/* Hover changes snap and never transition: a 150ms color transition on a
+   control would also run on theme change, and the theme switch must be
+   instant everywhere. Pressed feedback on touch comes from the native tap
+   highlight, which is deliberately not removed. */
+@media (hover: hover) and (pointer: fine) {
+  .primary:hover {
+    background: var(--background);
+    color: var(--accent);
+  }
+
+  .secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}

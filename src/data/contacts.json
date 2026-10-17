@@ -1,0 +1,23 @@
+[
+  {
+    "id": "email",
+    "label": "Email",
+    "value": "technicalmasti864@gmail.com",
+    "href": "mailto:technicalmasti864@gmail.com",
+    "icon": "mail"
+  },
+  {
+    "id": "github",
+    "label": "GitHub",
+    "value": "github.com/WahajGul",
+    "href": "https://github.com/WahajGul",
+    "icon": "github"
+  },
+  {
+    "id": "linkedin",
+    "label": "LinkedIn",
+    "value": "linkedin.com/in/example",
+    "href": "https://www.linkedin.com/in/example",
+    "icon": "linkedin"
+  }
+]

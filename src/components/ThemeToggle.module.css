@@ -1,0 +1,29 @@
+/* Theme toggle: a 44px square control, boundary in muted (passes 3:1
+   against the background in both themes, per the DESIGN.md contrast rule). */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--muted);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+}
+
+.toggle:active {
+  background: var(--accent-tint-strong);
+}
+
+/* No transition on purpose: the theme switch must be instant. */

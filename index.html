@@ -2,12 +2,60 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wahaj Gul | Full-Stack Developer</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Single tint tag for browser chrome. The inline script below and
+         ThemeContext both keep it in sync with the active theme. -->
+    <meta name="theme-color" content="#F7F8F9" />
+    <!-- Applies the resolved theme before first paint so a light choice on a
+         dark OS (or the reverse) never flashes the wrong colors. Colors mirror
+         src/styles/tokens.css, the source of truth; data-theme is only set
+         here for an explicit user choice, so the OS preference keeps driving
+         it via CSS when nothing is stored. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var explicit = stored === "light" || stored === "dark";
+          var dark =
+            stored === "dark" ||
+            (!explicit && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (explicit) document.documentElement.dataset.theme = stored;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", dark ? "#12151A" : "#F7F8F9");
+        } catch (error) {
+          /* Storage unavailable: CSS and ThemeContext take over after mount. */
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Wahaj Gul — React developer</title>
+    <meta
+      name="description"
+      content="React and TypeScript developer, currently learning Docker, Linux, and Node. Projects, skills, and contact."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Wahaj Gul — React developer" />
+    <meta
+      property="og:description"
+      content="React and TypeScript developer, currently learning Docker, Linux, and Node. Projects, skills, and contact."
+    />
+    <!-- The first-screen h1 renders at 700: preload only that weight. The
+         600 display weight is used by below-the-fold headings and loads
+         through its own @font-face instead of competing here. -->
+    <link
+      rel="preload"
+      href="/fonts/bricolage-grotesque-700-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
